@@ -1,15 +1,41 @@
 import './bootstrap'
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from 'ziggy-js'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
+import DialogService from 'primevue/dialogservice'
+import Tooltip from 'primevue/tooltip'
 import 'primeicons/primeicons.css'
+import ErpPreset from './theme/erp-preset'
 
 const pinia = createPinia()
+
+const ptBR = {
+    dayNames: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+    dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+    dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+    monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+    monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    today: 'Hoje',
+    clear: 'Limpar',
+    dateFormat: 'dd/mm/yy',
+    firstDayOfWeek: 0,
+    weak: 'Fraco',
+    medium: 'Médio',
+    strong: 'Forte',
+    passwordPrompt: 'Digite uma senha',
+    emptyMessage: 'Nenhum resultado encontrado',
+    emptyFilterMessage: 'Nenhum resultado encontrado',
+    accept: 'Sim',
+    reject: 'Não',
+    choose: 'Escolher',
+    upload: 'Enviar',
+    cancel: 'Cancelar',
+    fileSizeTypes: ['B', 'KB', 'MB', 'GB', 'TB'],
+}
 
 createInertiaApp({
     title: (title) => `${title} — ERP`,
@@ -33,13 +59,25 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(pinia)
-            .use(PrimeVue, { ripple: true })
+            .use(PrimeVue, {
+                theme: {
+                    preset: ErpPreset,
+                    options: {
+                        darkModeSelector: '.dark',
+                        cssLayer: false,
+                    },
+                },
+                locale: ptBR,
+                ripple: true,
+            })
             .use(ToastService)
             .use(ConfirmationService)
+            .use(DialogService)
+            .directive('tooltip', Tooltip)
             .mount(el)
     },
 
     progress: {
-        color: '#4F46E5',
+        color: '#14b8a6',
     },
 })

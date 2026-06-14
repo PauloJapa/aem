@@ -1,11 +1,154 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* ── Variáveis de tema ERP ──────────────────────────────────────────────────── */
+:root {
+    /* Sidebar */
+    --erp-sidebar-width: 240px;
+    --erp-sidebar-collapsed-width: 64px;
+    --erp-sidebar-bg: #115e59;
+    --erp-sidebar-text: #ccfbf1;
+    --erp-sidebar-active-bg: #0f766e;
+    --erp-sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --erp-sidebar-icon: #5eead4;
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Header */
+    --erp-header-height: 56px;
+    --erp-header-bg: #ffffff;
+    --erp-header-border: #e2e8f0;
+
+    /* Badges / notificações */
+    --erp-badge-info: #3b82f6;
+    --erp-badge-sucesso: #22c55e;
+    --erp-badge-alerta: #f59e0b;
+    --erp-badge-erro: #ef4444;
+    --erp-badge-confirm: #14b8a6;
+}
+
+.dark {
+    --erp-sidebar-bg: #042f2e;
+    --erp-sidebar-active-bg: #134e4a;
+    --erp-header-bg: #0f172a;
+    --erp-header-border: #1e293b;
+}
+
+/* ── Layout principal ───────────────────────────────────────────────────────── */
+.erp-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.erp-main {
+    flex: 1;
+    margin-left: var(--erp-sidebar-width);
+    transition: margin-left 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.erp-main--collapsed {
+    margin-left: var(--erp-sidebar-collapsed-width);
+}
+
+.erp-header {
+    height: var(--erp-header-height);
+    background: var(--erp-header-bg);
+    border-bottom: 1px solid var(--erp-header-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+}
+
+.erp-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────────────── */
+.erp-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--erp-sidebar-width);
+    background: var(--erp-sidebar-bg);
+    color: var(--erp-sidebar-text);
+    z-index: 50;
+    transition: width 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.erp-sidebar--collapsed {
+    width: var(--erp-sidebar-collapsed-width);
+}
+
+.erp-sidebar__logo {
+    height: var(--erp-header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.erp-sidebar__nav {
+    flex: 1;
+    padding: 0.5rem 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.erp-sidebar__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    cursor: pointer;
+    color: var(--erp-sidebar-text);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.erp-sidebar__item:hover {
+    background: var(--erp-sidebar-hover-bg);
+}
+
+.erp-sidebar__item--active {
+    background: var(--erp-sidebar-active-bg);
+    color: #ffffff;
+}
+
+.erp-sidebar__icon {
+    color: var(--erp-sidebar-icon);
+    flex-shrink: 0;
+    width: 1.25rem;
+    text-align: center;
+}
+
+.erp-sidebar__item--active .erp-sidebar__icon {
+    color: #ffffff;
+}
+
+.erp-sidebar__label {
+    opacity: 1;
+    width: auto;
+    transition: opacity 0.15s ease, width 0.15s ease;
+    overflow: hidden;
+}
+
+.erp-sidebar--collapsed .erp-sidebar__label {
+    opacity: 0;
+    width: 0;
+}
+
+.erp-sidebar__footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }

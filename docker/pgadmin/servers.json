@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "ERP Local",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "erp",
+      "Username": "erp_user",
+      "SSLMode": "prefer",
+      "PassFile": "/pgpassfile"
+    }
+  }
+}

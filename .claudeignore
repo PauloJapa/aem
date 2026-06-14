@@ -1,0 +1,25 @@
+# ── Dependências (nunca precisam ser lidas pelo Claude) ───────────────────────
+src/vendor/
+src/node_modules/
+
+# ── Assets compilados ─────────────────────────────────────────────────────────
+src/public/build/
+src/public/hot
+
+# ── Cache e bootstrap gerado ──────────────────────────────────────────────────
+src/bootstrap/cache/
+
+# ── Storage (logs, uploads, filas) ────────────────────────────────────────────
+src/storage/logs/
+src/storage/app/
+src/storage/framework/cache/
+src/storage/framework/sessions/
+src/storage/framework/views/
+
+# ── Banco SQLite de desenvolvimento ───────────────────────────────────────────
+src/database/database.sqlite
+
+# ── Lock files (raramente úteis para análise) ─────────────────────────────────
+src/composer.lock
+src/package-lock.json
+src/yarn.lock

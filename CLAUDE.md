@@ -355,6 +355,24 @@ docker compose exec app php artisan key:generate
 
 ---
 
+## estrutura global para documentação do projeto (para o Claude Code entender o contexto de cada módulo):
+src/docs/                    # arquitetura geral
+├── modulos.md
+├── arquitetura.md
+├── controle-acesso.md
+├── padroes-codigo.md
+├── ambiente.md
+└── decisoes/            # ADR — por que escolhemos X
+    ├── 001-postgresql.md
+    └── 002-inertia-vue.md
+
+Modules/Financeiro/
+└── docs/
+    ├── spec.md          # o principal — regras, entidades, fluxos
+    ├── entidades.md
+    ├── fluxos.md
+    └── permissoes.md
+
 ## Cuidados Especiais
 
 1. **Nunca colocar regra de negócio em Controller ou Model** — use Services

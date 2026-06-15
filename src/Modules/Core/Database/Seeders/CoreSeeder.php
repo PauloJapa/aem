@@ -15,9 +15,14 @@ class CoreSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // ── Roles ─────────────────────────────────────────────────────────────
-        $admin    = Role::firstOrCreate(['name' => 'admin']);
-        $gerente  = Role::firstOrCreate(['name' => 'gerente']);
-        $operador = Role::firstOrCreate(['name' => 'operador']);
+        $admin    = Role::firstOrCreate(['name' => 'admin'],    ['label' => 'Administrador']);
+        $gerente  = Role::firstOrCreate(['name' => 'gerente'],  ['label' => 'Gerente']);
+        $operador = Role::firstOrCreate(['name' => 'operador'], ['label' => 'Operador']);
+
+        // Atualiza labels para roles já existentes (idempotente)
+        $admin->fill(['label' => 'Administrador'])->save();
+        $gerente->fill(['label' => 'Gerente'])->save();
+        $operador->fill(['label' => 'Operador'])->save();
 
         // ── Permissions ───────────────────────────────────────────────────────
         $permissions = [
@@ -41,9 +46,11 @@ class CoreSeeder extends Seeder
         }
 
         Permission::firstOrCreate(['name' => 'core.menu.gerenciar']);
+        Permission::firstOrCreate(['name' => 'core.usuarios.gerenciar']);
 
         // ── Atribuir permissions às roles ─────────────────────────────────────
-        $admin->syncPermissions(array_merge($permissions, ['core.menu.gerenciar']));
+        $corePermissions = ['core.menu.gerenciar', 'core.usuarios.gerenciar'];
+        $admin->syncPermissions(array_merge($permissions, $corePermissions));
 
         $gerente->syncPermissions(array_values(array_filter(
             $permissions,
@@ -76,13 +83,14 @@ class CoreSeeder extends Seeder
 
         // ── Itens de menu no banco ────────────────────────────────────────────
         $menuItens = [
-            ['label' => 'Dashboard',  'icon' => 'pi pi-home',          'rota' => 'dashboard', 'permission' => null,             'ordem' => 1],
-            ['label' => 'Cadastro',   'icon' => 'pi pi-database',      'rota' => null,        'permission' => null,             'ordem' => 2],
-            ['label' => 'Vendas',     'icon' => 'pi pi-shopping-cart', 'rota' => null,        'permission' => null,             'ordem' => 3],
-            ['label' => 'Compras',    'icon' => 'pi pi-shopping-bag',  'rota' => null,        'permission' => null,             'ordem' => 4],
-            ['label' => 'Financeiro', 'icon' => 'pi pi-wallet',        'rota' => null,        'permission' => null,             'ordem' => 5],
-            ['label' => 'Estoque',    'icon' => 'pi pi-warehouse',     'rota' => null,        'permission' => null,             'ordem' => 6],
-            ['label' => 'DRE',        'icon' => 'pi pi-chart-bar',     'rota' => '#',         'permission' => 'dre.visualizar', 'ordem' => 7],
+            ['label' => 'Dashboard',    'icon' => 'pi pi-home',          'rota' => 'dashboard',          'permission' => null,                      'ordem' => 1],
+            ['label' => 'Cadastro',     'icon' => 'pi pi-database',      'rota' => null,                  'permission' => null,                      'ordem' => 2],
+            ['label' => 'Vendas',       'icon' => 'pi pi-shopping-cart', 'rota' => null,                  'permission' => null,                      'ordem' => 3],
+            ['label' => 'Compras',      'icon' => 'pi pi-shopping-bag',  'rota' => null,                  'permission' => null,                      'ordem' => 4],
+            ['label' => 'Financeiro',   'icon' => 'pi pi-wallet',        'rota' => null,                  'permission' => null,                      'ordem' => 5],
+            ['label' => 'Estoque',      'icon' => 'pi pi-warehouse',     'rota' => null,                  'permission' => null,                      'ordem' => 6],
+            ['label' => 'DRE',          'icon' => 'pi pi-chart-bar',     'rota' => '#',                   'permission' => 'dre.visualizar',           'ordem' => 7],
+            ['label' => 'Administração', 'icon' => 'pi pi-cog',          'rota' => null,                  'permission' => 'core.usuarios.gerenciar',  'ordem' => 8],
         ];
 
         $filhos = [
@@ -107,6 +115,11 @@ class CoreSeeder extends Seeder
             'Estoque' => [
                 ['label' => 'Movimentações', 'icon' => 'pi pi-arrows-v',  'rota' => '#', 'permission' => 'estoque.movimentacoes.visualizar', 'ordem' => 1],
                 ['label' => 'Inventário',    'icon' => 'pi pi-clipboard', 'rota' => '#', 'permission' => 'estoque.inventario.visualizar',    'ordem' => 2],
+            ],
+            'Administração' => [
+                ['label' => 'Usuários', 'icon' => 'pi pi-users', 'rota' => 'core.usuarios.index', 'permission' => 'core.usuarios.gerenciar', 'ordem' => 1],
+                ['label' => 'Perfis',   'icon' => 'pi pi-id-card', 'rota' => 'core.perfis.index', 'permission' => 'core.usuarios.gerenciar', 'ordem' => 2],
+                ['label' => 'Menus',    'icon' => 'pi pi-bars',    'rota' => 'core.menus.index',   'permission' => 'core.menu.gerenciar',     'ordem' => 3],
             ],
         ];
 

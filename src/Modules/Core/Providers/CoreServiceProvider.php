@@ -2,10 +2,14 @@
 
 namespace Modules\Core\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Modules\Core\Models\Menu;
 use Modules\Core\Policies\MenuPolicy;
+use Modules\Core\Policies\PerfilPolicy;
+use Modules\Core\Policies\UsuarioPolicy;
 use Nwidart\Modules\Support\ModuleServiceProvider;
+use Spatie\Permission\Models\Role;
 
 class CoreServiceProvider extends ModuleServiceProvider
 {
@@ -22,5 +26,7 @@ class CoreServiceProvider extends ModuleServiceProvider
     {
         parent::boot();
         Gate::policy(Menu::class, MenuPolicy::class);
+        Gate::policy(User::class, UsuarioPolicy::class);
+        Gate::policy(Role::class, PerfilPolicy::class);
     }
 }

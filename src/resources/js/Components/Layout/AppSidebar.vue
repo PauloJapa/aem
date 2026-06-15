@@ -19,7 +19,7 @@
                 <template v-if="!item.filhos">
                     <Link
                         v-tooltip.right="props.collapsed ? item.label : null"
-                        :href="!item.rota || item.rota === '#' ? '#' : route(item.rota)"
+                        :href="resolveHref(item.rota)"
                         class="erp-sidebar__item"
                         :class="{ 'erp-sidebar__item--active': isAtivo(item) }"
                     >
@@ -32,7 +32,7 @@
                 <template v-else>
                     <button
                         type="button"
-                        v-tooltip.right="props.collapsed ? item.label : null"
+                        v-tooltip.right="props.collapsed ? item.label : undefined"
                         class="erp-sidebar__item erp-sidebar__item--pai"
                         :class="{ 'erp-sidebar__item--active': isGrupoAtivo(item) }"
                         @click.stop="handlePaiClick(item.label)"
@@ -46,20 +46,21 @@
                         />
                     </button>
 
-                    <Transition name="submenu">
-                        <div v-if="!props.collapsed && grupoAberto === item.label" class="erp-sidebar__sub">
-                            <Link
-                                v-for="filho in item.filhos"
-                                :key="filho.label"
-                                :href="!filho.rota || filho.rota === '#' ? '#' : route(filho.rota)"
-                                class="erp-sidebar__item erp-sidebar__item--filho"
-                                :class="{ 'erp-sidebar__item--active': isAtivo(filho) }"
-                            >
-                                <i :class="filho.icon" class="erp-sidebar__icon" style="font-size:0.8rem;" />
-                                <span class="erp-sidebar__label">{{ filho.label }}</span>
-                            </Link>
-                        </div>
-                    </Transition>
+                    <div
+                        v-show="!props.collapsed && grupoAberto === item.label"
+                        class="erp-sidebar__sub"
+                    >
+                        <Link
+                            v-for="filho in item.filhos"
+                            :key="filho.label"
+                            :href="resolveHref(filho.rota)"
+                            class="erp-sidebar__item erp-sidebar__item--filho"
+                            :class="{ 'erp-sidebar__item--active': isAtivo(filho) }"
+                        >
+                            <i :class="filho.icon" class="erp-sidebar__icon" style="font-size:0.8rem;" />
+                            <span class="erp-sidebar__label">{{ filho.label }}</span>
+                        </Link>
+                    </div>
                 </template>
             </template>
         </nav>
@@ -109,11 +110,22 @@ function toggleGrupo(label) {
 
 function isAtivo(item) {
     if (!item.rota || item.rota === '#') return false
-    try { return page.url.startsWith('/' + item.rota.replace('.', '/')) } catch { return false }
+    try {
+        // item.rota é nome de rota como "core.usuarios.index" → "/core/usuarios/index"
+        // Compara com o início da URL atual
+        const partes = item.rota.split('.')
+        const path   = '/' + partes.slice(0, -1).join('/')
+        return page.url.startsWith(path)
+    } catch { return false }
 }
 
 function isGrupoAtivo(item) {
     return item.filhos?.some(f => isAtivo(f)) ?? false
+}
+
+function resolveHref(rota) {
+    if (!rota || rota === '#') return '#'
+    try { return route(rota) } catch { return '#' }
 }
 </script>
 
@@ -144,16 +156,8 @@ function isGrupoAtivo(item) {
     font-size: 0.8125rem;
 }
 
-/* Animação submenu */
-.submenu-enter-active,
-.submenu-leave-active {
-    transition: max-height 0.2s ease, opacity 0.2s ease;
-    overflow: hidden;
-    max-height: 300px;
-}
-.submenu-enter-from,
-.submenu-leave-to {
-    max-height: 0;
-    opacity: 0;
+/* Submenu aberto/fechado */
+.erp-sidebar__sub {
+    transition: none;
 }
 </style>

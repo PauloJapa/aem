@@ -83,6 +83,7 @@ import { useThemeStore } from '@/stores/useThemeStore'
 import AppAvatar from '@/Components/UI/AppAvatar.vue'
 
 const themeStore = useThemeStore()
+const menu = computed(() => usePage().props.auth?.menu ?? [])
 
 defineProps({
     collapsed: { type: Boolean, default: false },
@@ -106,32 +107,6 @@ function isGrupoAtivo(item) {
     return item.filhos?.some(f => isAtivo(f)) ?? false
 }
 
-const menu = [
-    { label: 'Dashboard',  icon: 'pi pi-home',         rota: 'dashboard' },
-    { label: 'Cadastro',   icon: 'pi pi-database',      filhos: [
-        { label: 'Clientes',     icon: 'pi pi-users',  rota: '#' },
-        { label: 'Fornecedores', icon: 'pi pi-truck',  rota: '#' },
-        { label: 'Produtos',     icon: 'pi pi-box',    rota: '#' },
-    ]},
-    { label: 'Vendas',     icon: 'pi pi-shopping-cart', filhos: [
-        { label: 'Pedidos',    icon: 'pi pi-list', rota: '#' },
-        { label: 'Orçamentos', icon: 'pi pi-file', rota: '#' },
-    ]},
-    { label: 'Compras',    icon: 'pi pi-shopping-bag',  filhos: [
-        { label: 'Pedidos de Compra', icon: 'pi pi-list',  rota: '#' },
-        { label: 'Recebimento',       icon: 'pi pi-inbox', rota: '#' },
-    ]},
-    { label: 'Financeiro', icon: 'pi pi-wallet',         filhos: [
-        { label: 'Contas a Pagar',   icon: 'pi pi-arrow-up-right',  rota: '#' },
-        { label: 'Contas a Receber', icon: 'pi pi-arrow-down-left', rota: '#' },
-        { label: 'Fluxo de Caixa',   icon: 'pi pi-chart-line',      rota: '#' },
-    ]},
-    { label: 'Estoque',    icon: 'pi pi-warehouse',      filhos: [
-        { label: 'Movimentações', icon: 'pi pi-arrows-v',  rota: '#' },
-        { label: 'Inventário',    icon: 'pi pi-clipboard', rota: '#' },
-    ]},
-    { label: 'DRE',        icon: 'pi pi-chart-bar',      rota: '#' },
-]
 </script>
 
 <style>

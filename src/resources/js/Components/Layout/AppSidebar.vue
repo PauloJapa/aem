@@ -1,8 +1,8 @@
 <template>
     <aside
         class="erp-sidebar"
-        :class="{ 'erp-sidebar--collapsed': collapsed }"
-        @click="collapsed && themeStore.toggleSidebar()"
+        :class="{ 'erp-sidebar--collapsed': props.collapsed }"
+        @click="props.collapsed && themeStore.toggleSidebar()"
     >
         <!-- Logo -->
         <div class="erp-sidebar__logo">
@@ -15,11 +15,11 @@
         <!-- Navegação -->
         <nav class="erp-sidebar__nav">
             <template v-for="item in menu" :key="item.label">
-                <!-- Item simples -->
+                <!-- Item simples (sem filhos) -->
                 <template v-if="!item.filhos">
                     <Link
-                        v-tooltip.right="collapsed ? item.label : null"
-                        :href="item.rota === '#' ? '#' : route(item.rota)"
+                        v-tooltip.right="props.collapsed ? item.label : null"
+                        :href="!item.rota || item.rota === '#' ? '#' : route(item.rota)"
                         class="erp-sidebar__item"
                         :class="{ 'erp-sidebar__item--active': isAtivo(item) }"
                     >
@@ -32,26 +32,26 @@
                 <template v-else>
                     <button
                         type="button"
-                        v-tooltip.right="collapsed ? item.label : null"
+                        v-tooltip.right="props.collapsed ? item.label : null"
                         class="erp-sidebar__item erp-sidebar__item--pai"
                         :class="{ 'erp-sidebar__item--active': isGrupoAtivo(item) }"
-                        @click="!collapsed && toggleGrupo(item.label)"
+                        @click.stop="handlePaiClick(item.label)"
                     >
                         <i :class="item.icon" class="erp-sidebar__icon" />
                         <span class="erp-sidebar__label">{{ item.label }}</span>
                         <i
-                            v-if="!collapsed"
+                            v-if="!props.collapsed"
                             class="pi erp-sidebar__chevron"
                             :class="grupoAberto === item.label ? 'pi-chevron-up' : 'pi-chevron-down'"
                         />
                     </button>
 
                     <Transition name="submenu">
-                        <div v-if="!collapsed && grupoAberto === item.label" class="erp-sidebar__sub">
+                        <div v-if="!props.collapsed && grupoAberto === item.label" class="erp-sidebar__sub">
                             <Link
                                 v-for="filho in item.filhos"
                                 :key="filho.label"
-                                :href="filho.rota === '#' ? '#' : route(filho.rota)"
+                                :href="!filho.rota || filho.rota === '#' ? '#' : route(filho.rota)"
                                 class="erp-sidebar__item erp-sidebar__item--filho"
                                 :class="{ 'erp-sidebar__item--active': isAtivo(filho) }"
                             >
@@ -83,16 +83,25 @@ import { useThemeStore } from '@/stores/useThemeStore'
 import AppAvatar from '@/Components/UI/AppAvatar.vue'
 
 const themeStore = useThemeStore()
-const menu = computed(() => usePage().props.auth?.menu ?? [])
+const page = usePage()
+const menu = computed(() => page.props.auth?.menu ?? [])
+const nomeUsuario = computed(() => page.props.auth?.user?.name ?? 'Usuário')
 
-defineProps({
+const props = defineProps({
     collapsed: { type: Boolean, default: false },
 })
 
-const page = usePage()
-const nomeUsuario = computed(() => page.props.auth?.user?.name ?? 'Usuário')
-
 const grupoAberto = ref(null)
+
+function handlePaiClick(label) {
+    if (props.collapsed) {
+        // Expande o sidebar e já marca o grupo para abrir
+        themeStore.toggleSidebar()
+        grupoAberto.value = label
+    } else {
+        toggleGrupo(label)
+    }
+}
 
 function toggleGrupo(label) {
     grupoAberto.value = grupoAberto.value === label ? null : label
@@ -106,7 +115,6 @@ function isAtivo(item) {
 function isGrupoAtivo(item) {
     return item.filhos?.some(f => isAtivo(f)) ?? false
 }
-
 </script>
 
 <style>
